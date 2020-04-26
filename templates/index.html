@@ -1,5 +1,14 @@
 {% extends "layout.html" %}
 
 {% block heading %}
-testing
+Welcome!
+{% endblock %}
+
+{% block body %}
+  To search books / check out reviews<br>
+  <a href="{{ url_for('login') }}" class="text-primary">Log In</a><br>
+  <hr>
+  To create an account<br>
+  <a href="{{ url_for('register') }}" class="text-info">Register</a>
+
 {% endblock %}
