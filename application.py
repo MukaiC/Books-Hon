@@ -26,8 +26,13 @@ db = scoped_session(sessionmaker(bind=engine))
 def index():
     return render_template("index.html")
 
-@app.route("/login")
+@app.route("/login", methods=["GET", "POST"])
 def login():
+    # !Get form information
+    if request.method=='POST':
+        username = request.form.get("username")
+        return render_template("search.html")
+
     return render_template("login.html")
 
 @app.route("/registration")
@@ -36,15 +41,15 @@ def registration():
 
 @app.route("/register", methods=["POST"])
 def register():
-    # Get form information
+    # !Get form information
     if request.method=='POST':
         username = request.form.get("username")
         if username=='':
             return render_template ("error.html", message="Invalid username", title="Error")
 
-    # Make sure form information is Invalid
+    # !Make sure form information is Invalid
 
-    # store the registration data in the database
+    # !store the registration data in the database
 
     return render_template("login.html")
 
