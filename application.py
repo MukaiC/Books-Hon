@@ -37,9 +37,10 @@ def registration():
 @app.route("/register", methods=["POST"])
 def register():
     # Get form information
-    username = request.form.get("username")
-    if username=='':
-        return render_template ("error.html", message="Invalid username", title="Error")
+    if request.method=='POST':
+        username = request.form.get("username")
+        if username=='':
+            return render_template ("error.html", message="Invalid username", title="Error")
 
     # Make sure form information is Invalid
 
