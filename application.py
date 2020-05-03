@@ -21,8 +21,8 @@ engine = create_engine(os.getenv("DATABASE_URL"))
 db = scoped_session(sessionmaker(bind=engine))
 
 
-@app.route("/")
-@app.route("/home")
+@app.route ("/")
+@app.route ("/index")
 def index():
     return render_template("index.html")
 
@@ -38,15 +38,24 @@ def login():
 
 @app.route("/register", methods=["GET", "POST"])
 def register():
-    # !Get form information
+    # When it is coming from registration form
     if request.method=='POST':
         username = request.form.get("username")
-        if username=='':
-            return render_template ("error.html", message="Invalid username", title="Error")
-        return redirect (url_for('login'))
-    # !Make sure form information is Invalid
+        email = request.form.get("email")
+        password = request.form.get("password")
+        confirm_password = request.form.get("confirm_password")
 
-    # !store the registration data in the database
+    # Make sure form information is valid
+        if username=='':
+            return render_template ("error.html", message="Invalid username", title="Error", link="register")
+        elif email=='':
+            return render_template ("error.html", message="Invalid Email adress", title="Error", link="register")
+        elif password=='' or password != confirm_password:
+            return render_template ("error.html", message="Invalid password", title="Error", link="register")
+        else:
+    # !!!store the registration data in the database before redirecting
+
+            return redirect (url_for('login'))
 
     return render_template("register.html")
 

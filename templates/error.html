@@ -5,5 +5,12 @@
 {% endblock %}
 
 {% block body %}
-  {{ message }}
+  {{ message }}<br>
+
+  {% if link %}
+    <a class="btn btn-info" href="{{ url_for(link) }}" role="button">Back</a>
+  {% else %}
+    <a class="btn btn-info" href="{{ url_for('index') }}" role="button">Back</a>
+  {% endif %}
+
 {% endblock %}
