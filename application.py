@@ -51,13 +51,29 @@ def register():
         elif email=='':
             return render_template ("error.html", message="Invalid Email adress", title="Error", link="register")
         elif password=='' or password != confirm_password:
-            return render_template ("error.html", message="Invalid password", title="Error", link="register")
+            return render_template ("error.html", message="Please enter the same password to confirm", title="Error", link="register")
         else:
     # !!!store the registration data in the database before redirecting
-
+            # db.execute("INSERT INTO users (username, email, password)")
             return redirect (url_for('login'))
 
     return render_template("register.html")
+
+
+
+def validate_register(username, email, password,confirm_password):
+    if username=='':
+        return render_template ("error.html", message="Invalid username", title="Error", link="register")
+    elif email=='':
+        return render_template ("error.html", message="Invalid Email adress", title="Error", link="register")
+    elif password=='' or password != confirm_password:
+        return render_template ("error.html", message="Please enter the same password to confirm", title="Error", link="register")
+    else:
+        return True
+
+# @app.route("/error")
+# def error():
+#     return render_template("error.html")
 
 @app.route("/search")
 def search():
