@@ -4,6 +4,7 @@ from flask import Flask, session, render_template, request, redirect, url_for, f
 from flask_session import Session
 from sqlalchemy import create_engine
 from sqlalchemy.orm import scoped_session, sessionmaker
+from flask_bcrypt import Bcrypt
 
 app = Flask(__name__)
 
@@ -20,6 +21,7 @@ Session(app)
 engine = create_engine(os.getenv("DATABASE_URL"))
 db = scoped_session(sessionmaker(bind=engine))
 
+bcrypt = Bcrypt(app)
 
 @app.route ("/")
 @app.route ("/index")
@@ -51,12 +53,21 @@ def register():
         elif email=='':
             return render_template ("error.html", message="Invalid Email adress", title="Error", link="register")
         elif password=='' or password != confirm_password:
-            return render_template ("error.html", message="Please enter a matching password to confirm", title="Error", link="register")
+            flash('Please enter a matching password to confirm', 'danger')
+
+
         else:
+            # make sure the username does not already exist
+            existing_user = db.execute("SELECT * FROM users WHERE username = :username", {"username": username}).fetchone()
+            if existing_user is not None:
+                return render_template ("error.html", message="That username is taken. Please choose a different one.", title="Error", link="register")
+
+            else:
     # !!!store the registration data in the database before redirecting
+                hashed_password = bcrypt.generate_password_hash(password).decode('utf-8')
             # db.execute("INSERT INTO users (username, email, password)")
-            flash('Your account has been created! You are now able to log in', 'success')
-            return redirect (url_for('login'))
+                flash('Your account has been created! You are now able to log in', 'success')
+                return redirect (url_for('login'))
 
     return render_template("register.html")
 
