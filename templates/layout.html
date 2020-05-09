@@ -17,6 +17,16 @@
   <body>
     <div class="container">
 
+    {% with messages = get_flashed_messages(with_categories=true) %}
+      {% if messages %}
+        {% for category, message in messages %}
+          <div class="alert alert-{{ category }}">
+            {{ message }}
+          </div>
+        {% endfor %}
+      {% endif %}
+    {% endwith %}
+
     <h1 class="display-3">{% block heading %}{% endblock %}</h1>
     {% block body %}
     {% endblock %}

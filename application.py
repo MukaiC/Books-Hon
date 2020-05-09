@@ -1,6 +1,6 @@
 import os
 
-from flask import Flask, session, render_template, request, redirect, url_for
+from flask import Flask, session, render_template, request, redirect, url_for, flash
 from flask_session import Session
 from sqlalchemy import create_engine
 from sqlalchemy.orm import scoped_session, sessionmaker
@@ -55,21 +55,11 @@ def register():
         else:
     # !!!store the registration data in the database before redirecting
             # db.execute("INSERT INTO users (username, email, password)")
+            flash('Your account has been created! You are now able to log in', 'success')
             return redirect (url_for('login'))
 
     return render_template("register.html")
 
-
-#
-# def validate_register(username, email, password,confirm_password):
-#     if username=='':
-#         return render_template ("error.html", message="Invalid username", title="Error", link="register")
-#     elif email=='':
-#         return render_template ("error.html", message="Invalid Email adress", title="Error", link="register")
-#     elif password=='' or password != confirm_password:
-#         return render_template ("error.html", message="Please enter the same password to confirm", title="Error", link="register")
-#     else:
-#         return True
 
 # @app.route("/error")
 # def error():
