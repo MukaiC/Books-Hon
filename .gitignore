@@ -1,2 +1,3 @@
 *.pyc
 **/flask_session
+config_project1.txt
