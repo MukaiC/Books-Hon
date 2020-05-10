@@ -58,14 +58,18 @@ def register():
 
         else:
             # make sure the username does not already exist
-            existing_user = db.execute("SELECT * FROM users WHERE username = :username", {"username": username}).fetchone()
-            if existing_user is not None:
+            existing_username = db.execute("SELECT * FROM users WHERE username = :username", {"username": username}).fetchone()
+            if existing_username is not None:
                 return render_template ("error.html", message="That username is taken. Please choose a different one.", title="Error", link="register")
+            # make sure the email does not already exist
+            existing_email = db.execute("SELECT * FROM users WHERE email = :email", {"email": email}).fetchone()
+            if existing_email is not None:
+                return render_template ("error.html", message="That email is taken. Please choose a different one.", title="Error", link="register")
 
             else:
-    # !!!store the registration data in the database before redirecting
                 hashed_password = bcrypt.generate_password_hash(password).decode('utf-8')
-            # db.execute("INSERT INTO users (username, email, password)")
+                db.execute("INSERT INTO users (username, email, password) VALUES (:username, :email, :hashed_password)", {"username": username, "email": email, "hashed_password": hashed_password})
+                db.commit()
                 flash('Your account has been created! You are now able to log in', 'success')
                 return redirect (url_for('login'))
 
