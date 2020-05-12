@@ -40,8 +40,7 @@ def login():
         user = db.execute("SELECT * FROM users WHERE username = :username", {"username": username}).fetchone()
         # validate the user
         if user is not None and bcrypt.check_password_hash(user.password, password):
-            if user.id not in session["user_id"]:
-                session["user_id"].append(user.id)
+            session["user_id"] = user.id
             return redirect(url_for('search'))
         # if not validated
         else:
@@ -92,7 +91,7 @@ def register():
 def logout():
     # !!!
     return redirect(url_for('index'))
-    
+
 # @app.route("/error")
 # def error():
 #     return render_template("error.html")
