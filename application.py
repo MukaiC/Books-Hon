@@ -15,6 +15,7 @@ if not os.getenv("DATABASE_URL"):
 # Configure session to use filesystem
 app.config["SESSION_PERMANENT"] = False
 app.config["SESSION_TYPE"] = "filesystem"
+app.config["SECRET_KEY"] = os.getenv("SECRET_KEY")
 Session(app)
 
 # Set up database
@@ -41,6 +42,8 @@ def login():
         # validate the user
         if user is not None and bcrypt.check_password_hash(user.password, password):
             session["user_id"] = user.id
+            session["username"] = username
+            flash(f'You are now logged in as {session["username"]}!', 'success')
             return redirect(url_for('search'))
         # if not validated
         else:
