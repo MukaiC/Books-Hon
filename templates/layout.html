@@ -15,23 +15,38 @@
     {% endif %}
   </head>
   <body>
-    <div class="container">
-
-    {% with messages = get_flashed_messages(with_categories=true) %}
-      {% if messages %}
-        {% for category, message in messages %}
-          <div class="alert alert-{{ category }}">
-            {{ message }}
+    <header class="site-header">
+      <nav class="navbar navbar-expand-lg navbar-light">
+        <div class="container">
+          <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNavAltMarkup" aria-controls="navbarNavAltMarkup" aria-expanded="false" aria-label="Toggle navigation">
+            <span class="navbar-toggler-icon"></span>
+          </button>
+          <div class="navbar-nav ml-auto">
+            <a class="nav-item nav-link" href="{{ url_for('login') }}">Login</a>
+            <a class="nav-item nav-link" href="{{ url_for('register') }}">Sign Up</a>
           </div>
-        {% endfor %}
-      {% endif %}
-    {% endwith %}
+        </div>
+      </nav>
+    </header>
 
-    <h1 class="display-3">{% block heading %}{% endblock %}</h1>
-    {% block content %}
-    {% endblock %}
+    <main role=main class="container">
+      <div >
+        {% with messages = get_flashed_messages(with_categories=true) %}
+          {% if messages %}
+            {% for category, message in messages %}
+              <div class="alert alert-{{ category }}">
+                {{ message }}
+              </div>
+            {% endfor %}
+          {% endif %}
+        {% endwith %}
+      </div>
 
-    </div>
+      <h1 class="display-3 text-secondary">{% block heading %}{% endblock %}</h1>
+      {% block content %}
+      {% endblock %}
+
+    </main>
     <!-- Optional JavaScript -->
     <!-- jQuery first, then Popper.js, then Bootstrap JS -->
     <script src="https://code.jquery.com/jquery-3.4.1.slim.min.js" integrity="sha384-J6qa4849blE2+poT4WnyKhv5vZF5SrPo0iEjwBvKU7imGFAV0wwj1yYfoRSJoZ+n" crossorigin="anonymous"></script>
