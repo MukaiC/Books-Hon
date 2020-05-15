@@ -31,6 +31,9 @@ def index():
 
 @app.route("/login", methods=["GET", "POST"])
 def login():
+    if 'logged_in' in session:
+        flash (f'You are already logged in as {session["username"]}!', 'success')
+        return redirect(url_for('search'))
     # !Get form information
     if request.method=='POST':
         username = request.form.get("username")
@@ -103,12 +106,13 @@ def logout():
 
 @app.route("/search")
 def search():
-    if 'logged_in' in session and True:
-        return render_template("search.html")
-
-    else:
+    if 'logged_in' not in session:
         flash('Please log in first', 'danger')
         return redirect(url_for('login'))
+
+
+    return render_template("search.html")
+
 
 
 if __name__ == "__main__":
