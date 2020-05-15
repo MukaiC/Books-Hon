@@ -43,6 +43,7 @@ def login():
         if user is not None and bcrypt.check_password_hash(user.password, password):
             session["user_id"] = user.id
             session["username"] = username
+            session["logged_in"] = True
             flash(f'You are now logged in as {session["username"]}!', 'success')
             return redirect(url_for('search'))
         # if not validated
@@ -94,6 +95,7 @@ def register():
 def logout():
     session.pop('user_id', None)
     session.pop('username', None)
+    session.pop('logged_in', None)
     flash('You are now logged out', 'success')
     return redirect(url_for('index'))
 

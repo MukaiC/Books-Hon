@@ -22,8 +22,12 @@
             <span class="navbar-toggler-icon"></span>
           </button>
           <div class="navbar-nav ml-auto">
-            <a class="nav-item nav-link" href="{{ url_for('login') }}">Login</a>
-            <a class="nav-item nav-link" href="{{ url_for('register') }}">Sign Up</a>
+            {% if session["logged_in"] %}
+              <a class="nav-item nav-link" href="{{ url_for('logout') }}">Logout</a>
+            {% else %}
+              <a class="nav-item nav-link" href="{{ url_for('login') }}">Login</a>
+              <a class="nav-item nav-link" href="{{ url_for('register') }}">Sign Up</a>
+            {% endif %}
           </div>
         </div>
       </nav>
