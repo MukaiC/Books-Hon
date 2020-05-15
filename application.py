@@ -31,8 +31,6 @@ def index():
 
 @app.route("/login", methods=["GET", "POST"])
 def login():
-    if session.get("user_id") is None:
-        session["user_id"] = []
     # !Get form information
     if request.method=='POST':
         username = request.form.get("username")
@@ -105,7 +103,13 @@ def logout():
 
 @app.route("/search")
 def search():
-    return render_template("search.html")
+    if 'logged_in' in session and True:
+        return render_template("search.html")
+
+    else:
+        flash('Please log in first', 'danger')
+        return redirect(url_for('login'))
+
 
 if __name__ == "__main__":
     app.run(debug=True)
