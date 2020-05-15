@@ -34,7 +34,7 @@ def login():
     if 'logged_in' in session:
         flash (f'You are already logged in as {session["username"]}!', 'success')
         return redirect(url_for('search'))
-    # !Get form information
+    # Get form information
     if request.method=='POST':
         username = request.form.get("username")
         password = request.form.get("password")
@@ -104,16 +104,32 @@ def logout():
 # def error():
 #     return render_template("error.html")
 
-@app.route("/search")
+@app.route("/search", methods=["GET", "POST"])
 def search():
     if 'logged_in' not in session:
         flash('Please log in first', 'danger')
         return redirect(url_for('login'))
+    # Get form information, remove whitespace at beginning and ending
+    if request.method=='POST':
+        title = request.form.get("title").strip()
+        author = request.form.get("author").strip()
+        isbn = request.form.get("isbn").strip()
+        # Make sure at least one field is filled
+        if title == '' and author == '' and isbn == '':
+            flash('Please enter title, author or ISBN number', 'danger')
+
+        else:
+            # !!!Search the database for matching books
+            flash('Searching... almost', 'success')
+
+            return redirect(url_for('results'))
 
 
     return render_template("search.html")
 
-
+@app.route("/results", methods=["GET", "POST"])
+def results():
+    return render_template("results.html")
 
 if __name__ == "__main__":
     app.run(debug=True)
