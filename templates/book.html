@@ -3,3 +3,14 @@
 {% block heading %}
   Book
 {% endblock %}
+
+{% block content %}
+  <p class="text-secondary">Book details</p>
+  <hr>
+  <ul class="list-group list-group-flush">
+      <li class="list-group-item">Title: {{ book.title }}</li>
+      <li class="list-group-item">Author: {{ book.author }}</li>
+      <li class="list-group-item">Published in: {{ book.year }}</li>
+      <li class="list-group-item">ISBN: {{ book.isbn }}</li>
+  </ul>
+{% endblock %}

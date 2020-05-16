@@ -100,9 +100,11 @@ def logout():
     flash('You are now logged out', 'success')
     return redirect(url_for('index'))
 
-# @app.route("/error")
-# def error():
-#     return render_template("error.html")
+@app.route("/error")
+def error():
+    message = request.args.get('message')
+    link = request.args.get('link')
+    return render_template("error.html", message = message, link = link)
 
 @app.route("/search", methods=["GET", "POST"])
 def search():
@@ -138,9 +140,17 @@ def search():
 # def books():
 #     return render_template("books.html", books=books)
 
-# @app.route("/books/<int:book_id>")
-# def book():
-#     return render_template("book.html")
+@app.route("/search/<int:book_id>")
+def book(book_id):
+    """Lists details about a book and reviews if any"""
+    # Make sure the book exists
+    book = db.execute("SELECT * FROM books WHERE id = :id", {"id": book_id}).fetchone()
+    if book is None:
+        return redirect (url_for('error', message="No such book", link="search"))
+
+    # !!! Get all reviews
+
+    return render_template("book.html", book=book)
 
 
 if __name__ == "__main__":
