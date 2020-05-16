@@ -112,7 +112,7 @@ def search():
     # Get form information, remove whitespace at beginning and ending
     if request.method=='POST':
         title = request.form.get("title").strip()
-        author = request.form.get("author").strip()
+        author = request.form.get("author").strip().title()
         isbn = request.form.get("isbn").strip()
         # Make sure at least one field is filled
         if title == '' and author == '' and isbn == '':
@@ -120,10 +120,17 @@ def search():
 
         else:
             # !!!Search the database for matching books
-            flash('Searching... almost', 'success')
+            books = db.execute("SELECT * FROM books WHERE title LIKE :title AND author LIKE :author AND isbn LIKE :isbn", {"title": f"%{title}%", "author": f"%{author}%", "isbn": f"%{isbn}%"}).fetchall()
+            if len(books) != 0:
 
-            return redirect(url_for('results'))
+            # Test to see if search is working
+            # book_count = db.execute("SELECT * FROM books WHERE title LIKE :title AND author LIKE :author AND isbn LIKE :isbn", {"title": f"%{title}%", "author": f"%{author}%", "isbn": f"%{isbn}%"}).rowcount
+            # flash(f'{book_count} books found', 'success')
 
+                return redirect(url_for('results'))
+
+            else:
+                flash('0 matching books found', 'danger')
 
     return render_template("search.html")
 
