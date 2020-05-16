@@ -1,0 +1,19 @@
+{% extends "layout.html" %}
+
+{% block heading %}
+  Results
+{% endblock %}
+
+{% block content %}
+  <p class="text-secondary">Number of books found: {{ book_count }} </p>
+  <hr>
+  <ul class="list-group list-group-flush">
+    {% for book in books %}
+      <li class="list-group-item">
+        <a href="#">
+          {{ book.title }} by {{ book.author }}
+        </a>
+      </li>
+    {% endfor %}
+  </ul>
+{% endblock %}

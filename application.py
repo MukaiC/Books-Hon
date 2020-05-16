@@ -111,32 +111,37 @@ def search():
         return redirect(url_for('login'))
     # Get form information, remove whitespace at beginning and ending
     if request.method=='POST':
-        title = request.form.get("title").strip()
-        author = request.form.get("author").strip().title()
-        isbn = request.form.get("isbn").strip()
+        title = request.form.get("title").title()
+        author = request.form.get("author").title()
+        isbn = request.form.get("isbn")
         # Make sure at least one field is filled
         if title == '' and author == '' and isbn == '':
             flash('Please enter title, author or ISBN number', 'danger')
 
         else:
-            # !!!Search the database for matching books
+            # Search the database for matching books
             books = db.execute("SELECT * FROM books WHERE title LIKE :title AND author LIKE :author AND isbn LIKE :isbn", {"title": f"%{title}%", "author": f"%{author}%", "isbn": f"%{isbn}%"}).fetchall()
-            if len(books) != 0:
+            book_count=len(books)
+            if book_count != 0:
 
             # Test to see if search is working
             # book_count = db.execute("SELECT * FROM books WHERE title LIKE :title AND author LIKE :author AND isbn LIKE :isbn", {"title": f"%{title}%", "author": f"%{author}%", "isbn": f"%{isbn}%"}).rowcount
             # flash(f'{book_count} books found', 'success')
 
-                return redirect(url_for('results'))
-
+                return render_template("books.html", books=books, book_count=book_count)
             else:
                 flash('0 matching books found', 'danger')
 
     return render_template("search.html")
 
-@app.route("/results", methods=["GET", "POST"])
-def results():
-    return render_template("results.html")
+# @app.route("/books", methods=["GET", "POST"])
+# def books():
+#     return render_template("books.html", books=books)
+
+# @app.route("/books/<int:book_id>")
+# def book():
+#     return render_template("book.html")
+
 
 if __name__ == "__main__":
     app.run(debug=True)
