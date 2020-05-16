@@ -104,7 +104,8 @@ def logout():
 def error():
     message = request.args.get('message')
     link = request.args.get('link')
-    return render_template("error.html", message = message, link = link)
+    title = request.args.get('title')
+    return render_template("error.html", message=message, link=link, title=title)
 
 @app.route("/search", methods=["GET", "POST"])
 def search():
