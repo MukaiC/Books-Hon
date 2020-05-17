@@ -13,4 +13,24 @@
       <li class="list-group-item">Published in: {{ book.year }}</li>
       <li class="list-group-item">ISBN: {{ book.isbn }}</li>
   </ul>
+  <hr>
+
+  <p class="text-secondary">Reviews</p><br>
+  <div>
+    <p class="text-secondary">Your rating</p>
+
+    {% set ratings_dict = {1:"Didn't like it", 2:"Was ok", 3:"Liked it", 4:"Really liked it", 5:"Excellent!"} %}
+    {% set rating_numbers = [1, 2, 3, 4, 5] %}
+    {% for rating_number in rating_numbers %}
+    <input name="rating" type="radio" value="{{ rating_number }}"><span class="text-secondary">{{ ratings_dict[ rating_number ] }}</span>
+
+    {% endfor %}
+  </div>
+
+  <div class="form-group">
+    <label for="review">Comment:</label>
+    <textarea class="form-control" rows="2" id="review" placeholder="Would you like to write your review?"></textarea>
+  </div>
+
+
 {% endblock %}
