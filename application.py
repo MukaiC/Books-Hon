@@ -141,7 +141,7 @@ def search():
 # def books():
 #     return render_template("books.html", books=books)
 
-@app.route("/search/<int:book_id>")
+@app.route("/search/<int:book_id>", methods=["GET", "POST"])
 def book(book_id):
     """Lists details about a book and reviews if any"""
     # Make sure the book exists
@@ -150,6 +150,10 @@ def book(book_id):
         return redirect (url_for('error', message="No such book", link="search"))
 
     # !!! Get all reviews
+
+    # if a review is submitted
+    if request.method == 'POST':
+        flash('Thank you for your review!', 'success')
 
     return render_template("book.html", book=book)
 
