@@ -33,6 +33,11 @@ users = """ CREATE TABLE IF NOT EXISTS users(
                     review_id INTEGER REFERENCES reviews
                     )"""
 
+# Command to add user_id column to review tables
+add_user_id = """ ALTER TABLE reviews ADD COLUMN IF NOT EXISTS user_id INTEGER REFERENCES users """
+
+# Command to delete review_id in users tables
+drop_review_id = """ ALTER TABLE users DROP COLUMN IF EXISTS review_id """
 
 
 def main():
@@ -40,6 +45,13 @@ def main():
     for table in tables:
         engine.execute(table)
     print("tables created")
+
+    engine.execute(add_user_id)
+    print ("user_id is added to reviews table")
+
+    engine.execute(drop_review_id)
+    print ("review_id is removed from users table")
+
 
 if __name__ == '__main__':
     main()
