@@ -149,15 +149,13 @@ def book(book_id):
     if book is None:
         return redirect (url_for('error', message="No such book", link="search"))
 
-    # !!! Get avarage rating and number of ratings from goodreads
+    # Get the avarage rating and number of ratings from goodreads
     res = requests.get("https://www.goodreads.com/book/review_counts.json", params={"key":os.getenv("GOODREADS_API_KEY"), "isbns":book.isbn})
     if res.status_code != 200:
         raise Exception ("Error: API request unsuccessful.")
     data = res.json()
     gr_average_rating = data['books'][0]['average_rating']
     gr_work_ratings_count = data ['books'][0]['work_ratings_count']
-
-
 
     # !!! Get reviews from users if any
 
