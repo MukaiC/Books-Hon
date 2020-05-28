@@ -137,9 +137,6 @@ def search():
 
     return render_template("search.html")
 
-# @app.route("/books", methods=["GET", "POST"])
-# def books():
-#     return render_template("books.html", books=books)
 
 @app.route("/search/<int:book_id>", methods=["GET", "POST"])
 def book(book_id):
@@ -158,14 +155,40 @@ def book(book_id):
     gr_work_ratings_count = data ['books'][0]['work_ratings_count']
 
     # !!! Get reviews from users if any
+    user_count = 0
+    user_rating = None
+    # Get users who have submitted rating/review for this book
+    # reviewed_users = db.execute("SELECT user_id FROM reviews WHERE book_id = :book_id", {"book_id": book_id}).fetchall()
+    # Get reviews for this book
+    reviews = db.execute("SELECT * FROM reviews WHERE book_id = :book_id", {"book_id": book_id}).fetchall()
+    # Count the number of existing reviews
+    reviews_count = len(reviews)
+    if reviews_count != 0:
+        user_count = reviews_count
+        # Get average rating
+        user_rating = db.execute("SELECT AVG(rating) FROM reviews WHERE book_id = :book_id", {"book_id": book_id})
+
+
+    # If there is no review
 
 
 
-    # if a review is submitted
+    # !!! Check if rating/review by the current user exists
+
+
+    # !!! if a review is submitted
     if request.method == 'POST':
-        flash('Thank you for your review!', 'success')
+        rating = request.form.get('rating')
+        review = request.form.get('review')
+        if rating is not None:
 
-    return render_template("book.html", book=book, gr_rating=gr_average_rating, gr_count=gr_work_ratings_count)
+
+            flash('Thank you for rating!', 'success')
+            return redirect(url_for('book', book_id=book_id))
+        else:
+            flash('Please enter your rating', 'danger')
+
+    return render_template("book.html", book=book, gr_rating=gr_average_rating, gr_count=gr_work_ratings_count, user_count=user_count, user_rating=user_rating, reviews=reviews)
 
 
 if __name__ == "__main__":
