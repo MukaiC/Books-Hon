@@ -166,23 +166,17 @@ def book(book_id):
     if reviews_count != 0:
         user_count = reviews_count
         # Get average rating
-        user_rating = db.execute("SELECT AVG(rating) FROM reviews WHERE book_id = :book_id", {"book_id": book_id})
+        avg_user_rating = db.execute("SELECT AVG(rating) FROM reviews WHERE book_id = :book_id", {"book_id": book_id}).fetchone()
+        user_rating = float(avg_user_rating[0])
 
-
-    # If there is no review
-
-
-
-    # !!! Check if rating/review by the current user exists
-
-
-    # !!! if a review is submitted
+    # if a review is submitted
     if request.method == 'POST':
         rating = request.form.get('rating')
         review = request.form.get('review')
         if rating is not None:
+            db.execute("INSERT INTO reviews (rating, comment, book_id, user_id) VALUES (:rating, :comment, :book_id, :user_id)", {"rating": rating, "comment": review, "book_id": book_id, "user_id": session["user_id"]})
 
-
+            db.commit()
             flash('Thank you for rating!', 'success')
             return redirect(url_for('book', book_id=book_id))
         else:
