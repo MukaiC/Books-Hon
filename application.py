@@ -1,6 +1,6 @@
 import os
 import requests
-from flask import Flask, session, render_template, request, redirect, url_for, flash
+from flask import Flask, session, render_template, request, redirect, url_for, flash, jsonify
 from flask_session import Session
 from sqlalchemy import create_engine
 from sqlalchemy.orm import scoped_session, sessionmaker
@@ -38,16 +38,16 @@ def login():
     if request.method=='POST':
         username = request.form.get("username")
         password = request.form.get("password")
-        # check if the user is registered
+        # Check if the user is registered
         user = db.execute("SELECT * FROM users WHERE username = :username", {"username": username}).fetchone()
-        # validate the user
+        # Validate the user
         if user is not None and bcrypt.check_password_hash(user.password, password):
             session["user_id"] = user.id
             session["username"] = username
             session["logged_in"] = True
             flash(f'You are now logged in as {session["username"]}!', 'success')
             return redirect(url_for('search'))
-        # if not validated
+        # If not validated
         else:
             flash('Login Unsuccessful. Please check username and password', 'danger')
 
@@ -73,11 +73,11 @@ def register():
 
 
         else:
-            # make sure the username does not already exist
+            # Make sure the username does not already exist
             existing_username = db.execute("SELECT * FROM users WHERE username = :username", {"username": username}).fetchone()
             if existing_username is not None:
                 return render_template ("error.html", message="That username is taken. Please choose a different one.", title="Error", link="register")
-            # make sure the email does not already exist
+            # Make sure the email does not already exist
             existing_email = db.execute("SELECT * FROM users WHERE email = :email", {"email": email}).fetchone()
             if existing_email is not None:
                 return render_template ("error.html", message="That email is taken. Please choose a different one.", title="Error", link="register")
@@ -126,11 +126,6 @@ def search():
             books = db.execute("SELECT * FROM books WHERE title LIKE :title AND author LIKE :author AND isbn LIKE :isbn", {"title": f"%{title}%", "author": f"%{author}%", "isbn": f"%{isbn}%"}).fetchall()
             book_count=len(books)
             if book_count != 0:
-
-            # Test to see if search is working
-            # book_count = db.execute("SELECT * FROM books WHERE title LIKE :title AND author LIKE :author AND isbn LIKE :isbn", {"title": f"%{title}%", "author": f"%{author}%", "isbn": f"%{isbn}%"}).rowcount
-            # flash(f'{book_count} books found', 'success')
-
                 return render_template("books.html", books=books, book_count=book_count)
             else:
                 flash('0 matching books found', 'danger')
@@ -154,11 +149,10 @@ def book(book_id):
     gr_average_rating = data['books'][0]['average_rating']
     gr_work_ratings_count = data ['books'][0]['work_ratings_count']
 
-    # !!! Get reviews from users if any
+    # Get reviews from users if any
     user_count = 0
     user_rating = None
-    # Get users who have submitted rating/review for this book
-    # reviewed_users = db.execute("SELECT user_id FROM reviews WHERE book_id = :book_id", {"book_id": book_id}).fetchall()
+
     # Get reviews for this book
     reviews = db.execute("SELECT * FROM reviews WHERE book_id = :book_id", {"book_id": book_id}).fetchall()
     # Count the number of existing reviews
@@ -169,7 +163,7 @@ def book(book_id):
         avg_user_rating = db.execute("SELECT AVG(rating) FROM reviews WHERE book_id = :book_id", {"book_id": book_id}).fetchone()
         user_rating = float(avg_user_rating[0])
 
-    # if a review is submitted
+    # If a review is submitted
     if request.method == 'POST':
         rating = request.form.get('rating')
         review = request.form.get('review')
@@ -184,6 +178,34 @@ def book(book_id):
 
     return render_template("book.html", book=book, gr_rating=gr_average_rating, gr_count=gr_work_ratings_count, user_count=user_count, user_rating=user_rating, reviews=reviews)
 
+
+@app.route("/api/<isbn>")
+def book_api(isbn):
+    # Make sure book exists.
+    book = db.execute("SELECT * FROM books WHERE isbn = :isbn", {"isbn": isbn}).fetchone()
+    if book is None:
+        return jsonify({"error": "Book not found"}), 404
+
+    # Get all ratings.
+    ratings = db.execute("SELECT rating FROM reviews WHERE book_id = :book_id", {"book_id": book.id}).fetchall()
+    ratings_count = len(ratings)
+
+    if ratings_count != 0:
+        ratings_total = 0
+        for rating in ratings:
+            ratings_total += rating[0]
+            average_score = float(ratings_total / ratings_count)
+    else:
+        average_score = None
+
+    return jsonify({
+        "title": book.title,
+        "author": book.author,
+        "year": book.year,
+        "isbn": book.isbn,
+        "review_count": ratings_count,
+        "average_score": average_score
+    })
 
 if __name__ == "__main__":
     app.run(debug=True)

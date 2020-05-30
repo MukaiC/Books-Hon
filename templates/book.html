@@ -42,7 +42,7 @@
     {% if user_count!=0 %}
       <p>Average user rating: {{ user_rating }} / 5.0 out of {{ user_count }} users</p>
       {% for review in reviews %}
-        {% if review.user_id == session["user_id"]%}
+        {% if review.user_id == session["user_id"] %}
           <p>Your rating of this book: {{ review.rating }} / 5.0 {{ review.comment }} </p><br>
         {% else %}
           {{ enter_review }}
