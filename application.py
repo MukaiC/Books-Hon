@@ -157,12 +157,15 @@ def book(book_id):
     reviews = db.execute("SELECT * FROM reviews WHERE book_id = :book_id", {"book_id": book_id}).fetchall()
     # Count the number of existing reviews
     reviews_count = len(reviews)
+    reviewed_users = []
     if reviews_count != 0:
         user_count = reviews_count
+        # Create list of users who have rated this book
+        for review in reviews:
+            reviewed_users.append(review.user_id)
         # Get average rating
         avg_user_rating = db.execute("SELECT AVG(rating) FROM reviews WHERE book_id = :book_id", {"book_id": book_id}).fetchone()
-        user_rating = float(avg_user_rating[0])
-
+        user_rating = round(avg_user_rating[0],2)
     # If a review is submitted
     if request.method == 'POST':
         rating = request.form.get('rating')
@@ -176,8 +179,7 @@ def book(book_id):
         else:
             flash('Please enter your rating', 'danger')
 
-    return render_template("book.html", book=book, gr_rating=gr_average_rating, gr_count=gr_work_ratings_count, user_count=user_count, user_rating=user_rating, reviews=reviews)
-
+    return render_template("book.html", book=book, gr_rating=gr_average_rating, gr_count=gr_work_ratings_count, user_count=user_count, user_rating=user_rating, reviews=reviews, reviewed_users=reviewed_users)
 
 @app.route("/api/<isbn>")
 def book_api(isbn):
@@ -194,7 +196,7 @@ def book_api(isbn):
         ratings_total = 0
         for rating in ratings:
             ratings_total += rating[0]
-            average_score = float(ratings_total / ratings_count)
+            average_score = round((ratings_total / ratings_count), 2)
     else:
         average_score = None
 

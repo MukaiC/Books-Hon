@@ -40,14 +40,17 @@
     {% endif %}
 
     {% if user_count!=0 %}
-      <p>Average user rating: {{ user_rating }} / 5.0 out of {{ user_count }} users</p>
-      {% for review in reviews %}
-        {% if review.user_id == session["user_id"] %}
-          <p>Your rating of this book: {{ review.rating }} / 5.0 {{ review.comment }} </p><br>
-        {% else %}
+    <p>Average user rating: {{ user_rating }} / 5.0 out of {{ user_count }} users</p>
+
+      {% if session["user_id"] in reviewed_users %}
+        {% for review in reviews %}
+          {% if review.user_id == session["user_id"] %}
+          <p>Your rating of this book: {{ review.rating }} / 5.0 {{ review.comment }} </p>
+          {% endif %}
+        {% endfor %}
+      {% else %}
           {{ enter_review }}
-        {% endif %}
-      {% endfor %}
+      {% endif %}
 
     {% else %}
       <p>There is no review by our users yet</p>
