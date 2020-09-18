@@ -1,4 +1,4 @@
-# Books - Hon
+# Project1: Books
 
 A simple book review application created with Flask
 
